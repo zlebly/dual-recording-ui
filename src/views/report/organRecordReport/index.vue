@@ -23,7 +23,7 @@
      <!-- 产品类型需从字典中获取名称展示出来 -->
     <el-table v-loading="loading" :data="organDualRecordingReport">
       <el-table-column label="组织机构代码" width="150" align="center" prop="orgCode" />
-      <el-table-column label="双录视频数量" width="150" align="center" prop="videoCount" />
+      <el-table-column label="双录视频数量" width="150" align="center" prop="imageCount" />
     </el-table>
     
     <pagination
@@ -80,7 +80,8 @@ export default {
     getList() {
       this.loading = true;
       getOrganDualRecordingReport(this.queryParams.orgCode).then(response => {
-        this.organDualRecordingReport = response.rows;
+        // console.log(response);
+        this.organDualRecordingReport = response.data;
         this.total = response.total;
         this.loading = false;
       });

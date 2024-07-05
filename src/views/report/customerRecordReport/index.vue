@@ -34,7 +34,7 @@
     <el-table v-loading="loading" :data="customerDualRecordingReport">
       <el-table-column label="机构号" width="150" align="center" prop="orgCode" />
       <el-table-column label="录入人" width="150" align="center" prop="userName" />
-      <el-table-column label="双录视频数量" width="150" align="center" prop="videoCount" />
+      <el-table-column label="双录视频数量" width="150" align="center" prop="imageCount" />
     </el-table>
     
     <pagination
@@ -98,7 +98,7 @@ export default {
     getList() {
       this.loading = true;
       getCustomerDualRecordingReport(this.queryParams.orgCode, this.queryParams.userId).then(response => {
-        this.customerDualRecordingReport = response.rows;
+        this.customerDualRecordingReport = response.data;
         this.total = response.total;
         this.loading = false;
       });

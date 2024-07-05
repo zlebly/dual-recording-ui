@@ -74,6 +74,6 @@ export function getOrganDualRecordingReport(orgCode) {
   return request({
     url: '/dualRecording/getOrgReport',
     method: 'get',
-    params: orgCode
+    params: {orgCode}
   })
 }
