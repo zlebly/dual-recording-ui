@@ -341,7 +341,7 @@
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, deptTreeSelect } from "@/api/system/user";
+import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, orgTreeSelect } from "@/api/system/user";
 import { getToken } from "@/utils/auth";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -461,7 +461,7 @@ export default {
   },
   created() {
     this.getList();
-    this.getDeptTree();
+    this.getorgTree();
     this.getConfigKey("sys.user.initPassword").then(response => {
       this.initPassword = response.msg;
     });
@@ -478,8 +478,8 @@ export default {
       );
     },
     /** 查询部门下拉树结构 */
-    getDeptTree() {
-      deptTreeSelect().then(response => {
+    getorgTree() {
+      orgTreeSelect().then(response => {
         this.deptOptions = response.data;
       });
     },

@@ -1,52 +1,52 @@
 import request from '@/utils/request'
 
-// 查询部门列表
+// 查询机构列表
 export function listDept(query) {
   return request({
-    url: '/system/dept/list',
+    url: '/system/org/list',
     method: 'get',
     params: query
   })
 }
 
-// 查询部门列表（排除节点）
-export function listDeptExcludeChild(deptId) {
+// 查询机构列表（排除节点）
+export function listDeptExcludeChild(orgCode) {
   return request({
-    url: '/system/dept/list/exclude/' + deptId,
+    url: '/system/org/list/exclude/' + orgCode,
     method: 'get'
   })
 }
 
-// 查询部门详细
-export function getDept(deptId) {
+// 查询机构详细
+export function getDept(orgCode) {
   return request({
-    url: '/system/dept/' + deptId,
+    url: '/system/org/' + orgCode,
     method: 'get'
   })
 }
 
-// 新增部门
+// 新增机构
 export function addDept(data) {
   return request({
-    url: '/system/dept',
+    url: '/system/org',
     method: 'post',
     data: data
   })
 }
 
-// 修改部门
+// 修改机构
 export function updateDept(data) {
   return request({
-    url: '/system/dept',
+    url: '/system/org',
     method: 'put',
     data: data
   })
 }
 
-// 删除部门
-export function delDept(deptId) {
+// 删除机构
+export function delDept(orgCode) {
   return request({
-    url: '/system/dept/' + deptId,
+    url: '/system/org/' + orgCode,
     method: 'delete'
   })
 }

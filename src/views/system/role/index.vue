@@ -252,7 +252,7 @@
 </template>
 
 <script>
-import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus, deptTreeSelect } from "@/api/system/role";
+import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus, orgTreeSelect } from "@/api/system/role";
 import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/system/menu";
 
 export default {
@@ -387,8 +387,8 @@ export default {
       });
     },
     /** 根据角色ID查询部门树结构 */
-    getDeptTree(roleId) {
-      return deptTreeSelect(roleId).then(response => {
+    getorgTree(roleId) {
+      return orgTreeSelect(roleId).then(response => {
         this.deptOptions = response.depts;
         return response;
       });
@@ -534,12 +534,12 @@ export default {
     /** 分配数据权限操作 */
     handleDataScope(row) {
       this.reset();
-      const deptTreeSelect = this.getDeptTree(row.roleId);
+      const orgTreeSelect = this.getorgTree(row.roleId);
       getRole(row.roleId).then(response => {
         this.form = response.data;
         this.openDataScope = true;
         this.$nextTick(() => {
-          deptTreeSelect.then(res => {
+          orgTreeSelect.then(res => {
             this.$refs.dept.setCheckedKeys(res.checkedKeys);
           });
         });
