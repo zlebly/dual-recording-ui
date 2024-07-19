@@ -52,7 +52,7 @@
       v-if="refreshTable"
       v-loading="loading"
       :data="menuList"
-      row-key="menuId"
+      row-key="functionCode"
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
@@ -108,7 +108,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="上级菜单" prop="parentId">
-              <treeselect
+              <treeSelect
                 v-model="form.parentId"
                 :options="menuOptions"
                 :normalizer="normalizer"
@@ -274,9 +274,9 @@
 </template>
 
 <script>
-import { listMenu, getMenu, delMenu, addMenu, updateMenu } from "@/api/system/menu";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { listMenu, getMenu, delMenu, addMenu, updateMenu } from "@/api/system/function";
+import Treeselect from "@riophae/vue-treeSelect";
+import "@riophae/vue-treeSelect/dist/vue-treeSelect.css";
 import IconSelect from "@/components/IconSelect";
 
 export default {
@@ -334,7 +334,7 @@ export default {
     getList() {
       this.loading = true;
       listMenu(this.queryParams).then(response => {
-        this.menuList = this.handleTree(response.data, "menuId");
+        this.menuList = this.handleTree(response.data, "functionCode");
         this.loading = false;
       });
     },
@@ -344,7 +344,7 @@ export default {
         delete node.children;
       }
       return {
-        id: node.menuId,
+        id: node.functionCode,
         label: node.menuName,
         children: node.children
       };
@@ -353,8 +353,8 @@ export default {
     getTreeselect() {
       listMenu().then(response => {
         this.menuOptions = [];
-        const menu = { menuId: 0, menuName: '主类目', children: [] };
-        menu.children = this.handleTree(response.data, "menuId");
+        const menu = { functionCode: 0, menuName: '主类目', children: [] };
+        menu.children = this.handleTree(response.data, "functionCode");
         this.menuOptions.push(menu);
       });
     },
@@ -366,7 +366,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        menuId: undefined,
+        functionCode: undefined,
         parentId: 0,
         menuName: undefined,
         icon: undefined,
@@ -392,8 +392,8 @@ export default {
     handleAdd(row) {
       this.reset();
       this.getTreeselect();
-      if (row != null && row.menuId) {
-        this.form.parentId = row.menuId;
+      if (row != null && row.functionCode) {
+        this.form.parentId = row.functionCode;
       } else {
         this.form.parentId = 0;
       }
@@ -412,7 +412,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       this.getTreeselect();
-      getMenu(row.menuId).then(response => {
+      getMenu(row.functionCode).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改菜单";
@@ -422,7 +422,7 @@ export default {
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.menuId != undefined) {
+          if (this.form.functionCode != undefined) {
             updateMenu(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -441,7 +441,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       this.$modal.confirm('是否确认删除名称为"' + row.menuName + '"的数据项？').then(function() {
-        return delMenu(row.menuId);
+        return delMenu(row.functionCode);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

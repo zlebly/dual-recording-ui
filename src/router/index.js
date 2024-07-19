@@ -113,7 +113,7 @@ export const dynamicRoutes = [
     permissions: ['system:role:edit'],
     children: [
       {
-        path: 'user/:roleId(\\d+)',
+        path: 'user/:roleCode(\\d+)',
         component: () => import('@/views/system/role/authUser'),
         name: 'AuthUser',
         meta: { title: '分配用户', activeMenu: '/system/role' }

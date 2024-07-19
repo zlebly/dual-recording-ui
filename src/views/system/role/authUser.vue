@@ -95,7 +95,7 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-    <select-user ref="select" :roleId="queryParams.roleId" @ok="handleQuery" />
+    <select-user ref="select" :roleCode="queryParams.roleCode" @ok="handleQuery" />
   </div>
 </template>
 
@@ -125,16 +125,16 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        roleId: undefined,
+        roleCode: undefined,
         userName: undefined,
         phonenumber: undefined
       }
     };
   },
   created() {
-    const roleId = this.$route.params && this.$route.params.roleId;
-    if (roleId) {
-      this.queryParams.roleId = roleId;
+    const roleCode = this.$route.params && this.$route.params.roleCode;
+    if (roleCode) {
+      this.queryParams.roleCode = roleCode;
       this.getList();
     }
   },
@@ -175,9 +175,9 @@ export default {
     },
     /** 取消授权按钮操作 */
     cancelAuthUser(row) {
-      const roleId = this.queryParams.roleId;
+      const roleCode = this.queryParams.roleCode;
       this.$modal.confirm('确认要取消该用户"' + row.userName + '"角色吗？').then(function() {
-        return authUserCancel({ userId: row.userId, roleId: roleId });
+        return authUserCancel({ userId: row.userId, roleCode: roleCode });
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("取消授权成功");
@@ -185,10 +185,10 @@ export default {
     },
     /** 批量取消授权按钮操作 */
     cancelAuthUserAll(row) {
-      const roleId = this.queryParams.roleId;
+      const roleCode = this.queryParams.roleCode;
       const userIds = this.userIds.join(",");
       this.$modal.confirm('是否取消选中用户授权数据项？').then(function() {
-        return authUserCancelAll({ roleId: roleId, userIds: userIds });
+        return authUserCancelAll({ roleCode: roleCode, userIds: userIds });
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("取消授权成功");

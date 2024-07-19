@@ -10,9 +10,9 @@ export function listRole(query) {
 }
 
 // 查询角色详细
-export function getRole(roleId) {
+export function getRole(roleCode) {
   return request({
-    url: '/system/role/' + roleId,
+    url: '/system/role/' + roleCode,
     method: 'get'
   })
 }
@@ -45,9 +45,9 @@ export function dataScope(data) {
 }
 
 // 角色状态修改
-export function changeRoleStatus(roleId, status) {
+export function changeRoleStatus(roleCode, status) {
   const data = {
-    roleId,
+    roleCode,
     status
   }
   return request({
@@ -58,9 +58,9 @@ export function changeRoleStatus(roleId, status) {
 }
 
 // 删除角色
-export function delRole(roleId) {
+export function delRole(roleCode) {
   return request({
-    url: '/system/role/' + roleId,
+    url: '/system/role/' + roleCode,
     method: 'delete'
   })
 }
@@ -111,9 +111,9 @@ export function authUserSelectAll(data) {
 }
 
 // 根据角色ID查询部门树结构
-export function orgTreeSelect(roleId) {
+export function orgTreeSelect(roleCode) {
   return request({
-    url: '/system/role/orgTree/' + roleId,
+    url: '/system/role/orgTree/' + roleCode,
     method: 'get'
   })
 }

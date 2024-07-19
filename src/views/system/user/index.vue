@@ -213,7 +213,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="归属部门" prop="deptId">
-              <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
+              <treeSelect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -282,12 +282,12 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="角色">
-              <el-select v-model="form.roleIds" multiple placeholder="请选择角色">
+              <el-select v-model="form.roleCodes" multiple placeholder="请选择角色">
                 <el-option
                   v-for="item in roleOptions"
-                  :key="item.roleId"
+                  :key="item.roleCode"
                   :label="item.roleName"
-                  :value="item.roleId"
+                  :value="item.roleCode"
                   :disabled="item.status == 1"
                 ></el-option>
               </el-select>
@@ -343,8 +343,8 @@
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, orgTreeSelect } from "@/api/system/user";
 import { getToken } from "@/utils/auth";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import Treeselect from "@riophae/vue-treeSelect";
+import "@riophae/vue-treeSelect/dist/vue-treeSelect.css";
 
 export default {
   name: "User",
@@ -523,7 +523,7 @@ export default {
         status: "0",
         remark: undefined,
         postIds: [],
-        roleIds: []
+        roleCodes: []
       };
       this.resetForm("form");
     },
@@ -579,7 +579,7 @@ export default {
         this.postOptions = response.posts;
         this.roleOptions = response.roles;
         this.$set(this.form, "postIds", response.postIds);
-        this.$set(this.form, "roleIds", response.roleIds);
+        this.$set(this.form, "roleCodes", response.roleCodes);
         this.open = true;
         this.title = "修改用户";
         this.form.password = "";

@@ -102,7 +102,7 @@
         <el-row>
           <el-col :span="24" v-if="form.parentId !== 0">
             <el-form-item label="上级部门" prop="parentId">
-              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择上级部门" />
+              <treeSelect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择上级部门" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -159,8 +159,8 @@
 
 <script>
 import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild } from "@/api/system/dept";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import Treeselect from "@riophae/vue-treeSelect";
+import "@riophae/vue-treeSelect/dist/vue-treeSelect.css";
 
 export default {
   name: "Dept",

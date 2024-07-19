@@ -62,7 +62,7 @@ export default {
   dicts: ['sys_normal_disable'],
   props: {
     // 角色编号
-    roleId: {
+    roleCode: {
       type: [Number, String]
     }
   },
@@ -80,7 +80,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        roleId: undefined,
+        roleCode: undefined,
         userName: undefined,
         phonenumber: undefined
       }
@@ -89,7 +89,7 @@ export default {
   methods: {
     // 显示弹框
     show() {
-      this.queryParams.roleId = this.roleId;
+      this.queryParams.roleCode = this.roleCode;
       this.getList();
       this.visible = true;
     },
@@ -119,13 +119,13 @@ export default {
     },
     /** 选择授权用户操作 */
     handleSelectUser() {
-      const roleId = this.queryParams.roleId;
+      const roleCode = this.queryParams.roleCode;
       const userIds = this.userIds.join(",");
       if (userIds == "") {
         this.$modal.msgError("请选择要分配的用户");
         return;
       }
-      authUserSelectAll({ roleId: roleId, userIds: userIds }).then(res => {
+      authUserSelectAll({ roleCode: roleCode, userIds: userIds }).then(res => {
         this.$modal.msgSuccess(res.msg);
         if (res.code === 200) {
           this.visible = false;
