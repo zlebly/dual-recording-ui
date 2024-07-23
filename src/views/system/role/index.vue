@@ -10,30 +10,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="权限字符" prop="roleKey">
-        <el-input
-          v-model="queryParams.roleKey"
-          placeholder="请输入权限字符"
-          clearable
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="角色状态"
-          clearable
-          style="width: 240px"
-        >
-          <el-option
-            v-for="dict in dict.type.sys_normal_disable"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
@@ -101,18 +77,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="角色编号" prop="roleCode" width="120" />
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="显示顺序" prop="roleSort" width="100" />
-      <el-table-column label="状态" align="center" width="100">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.status"
-            active-value="0"
-            inactive-value="1"
-            @change="handleStatusChange(scope.row)"
-          ></el-switch>
-        </template>
-      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -161,26 +126,8 @@
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="form.roleName" placeholder="请输入角色名称" />
         </el-form-item>
-        <el-form-item prop="roleKey">
-          <span slot="label">
-            <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)" placement="top">
-              <i class="el-icon-question"></i>
-            </el-tooltip>
-            权限字符
-          </span>
-          <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
-        </el-form-item>
         <el-form-item label="角色顺序" prop="roleSort">
           <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              v-for="dict in dict.type.sys_normal_disable"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
         </el-form-item>
         <el-form-item label="菜单权限">
           <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
@@ -213,9 +160,6 @@
         <el-form-item label="角色名称">
           <el-input v-model="form.roleName" :disabled="true" />
         </el-form-item>
-        <el-form-item label="权限字符">
-          <el-input v-model="form.roleKey" :disabled="true" />
-        </el-form-item>
         <el-form-item label="权限范围">
           <el-select v-model="form.dataScope" @change="dataScopeSelectChange">
             <el-option
@@ -227,17 +171,17 @@
           </el-select>
         </el-form-item>
         <el-form-item label="数据权限" v-show="form.dataScope == 2">
-          <el-checkbox v-model="deptExpand" @change="handleCheckedTreeExpand($event, 'dept')">展开/折叠</el-checkbox>
-          <el-checkbox v-model="deptNodeAll" @change="handleCheckedTreeNodeAll($event, 'dept')">全选/全不选</el-checkbox>
-          <el-checkbox v-model="form.deptCheckStrictly" @change="handleCheckedTreeConnect($event, 'dept')">父子联动</el-checkbox>
+          <el-checkbox v-model="orgExpand" @change="handleCheckedTreeExpand($event, 'org')">展开/折叠</el-checkbox>
+          <el-checkbox v-model="orgNodeAll" @change="handleCheckedTreeNodeAll($event, 'org')">全选/全不选</el-checkbox>
+          <el-checkbox v-model="form.orgCheckStrictly" @change="handleCheckedTreeConnect($event, 'org')">父子联动</el-checkbox>
           <el-tree
             class="tree-border"
-            :data="deptOptions"
+            :data="orgOptions"
             show-checkbox
             default-expand-all
-            ref="dept"
+            ref="org"
             node-key="id"
-            :check-strictly="!form.deptCheckStrictly"
+            :check-strictly="!form.orgCheckStrictly"
             empty-text="加载中，请稍候"
             :props="defaultProps"
           ></el-tree>
@@ -252,8 +196,8 @@
 </template>
 
 <script>
-import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus, orgTreeSelect } from "@/api/system/role";
-import { treeSelect as menuTreeselect, roleFunctionTreeSelect } from "@/api/system/function";
+import { listRole, getRole, delRole, addRole, updateRole, dataScope, orgTreeSelect } from "@/api/system/role";
+import { treeSelect as menuTreeselect, roleFunctionTreeSelect } from "@/api/system/menu";
 
 export default {
   name: "Role",
@@ -282,8 +226,8 @@ export default {
       openDataScope: false,
       menuExpand: false,
       menuNodeAll: false,
-      deptExpand: true,
-      deptNodeAll: false,
+      orgExpand: true,
+      orgNodeAll: false,
       // 日期范围
       dateRange: [],
       // 数据范围选项
@@ -312,14 +256,12 @@ export default {
       // 菜单列表
       menuOptions: [],
       // 部门列表
-      deptOptions: [],
+      orgOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         roleName: undefined,
-        roleKey: undefined,
-        status: undefined
       },
       // 表单参数
       form: {},
@@ -331,9 +273,6 @@ export default {
       rules: {
         roleName: [
           { required: true, message: "角色名称不能为空", trigger: "blur" }
-        ],
-        roleKey: [
-          { required: true, message: "权限字符不能为空", trigger: "blur" }
         ],
         roleSort: [
           { required: true, message: "角色顺序不能为空", trigger: "blur" }
@@ -371,11 +310,11 @@ export default {
       return checkedKeys;
     },
     // 所有部门节点数据
-    getDeptAllCheckedKeys() {
+    getOrgAllCheckedKeys() {
       // 目前被选中的部门节点
-      let checkedKeys = this.$refs.dept.getCheckedKeys();
+      let checkedKeys = this.$refs.org.getCheckedKeys();
       // 半选中的部门节点
-      let halfCheckedKeys = this.$refs.dept.getHalfCheckedKeys();
+      let halfCheckedKeys = this.$refs.org.getHalfCheckedKeys();
       checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
       return checkedKeys;
     },
@@ -389,19 +328,8 @@ export default {
     /** 根据角色ID查询部门树结构 */
     getorgTree(roleCode) {
       return orgTreeSelect(roleCode).then(response => {
-        this.deptOptions = response.depts;
+        this.orgOptions = response.orgs;
         return response;
-      });
-    },
-    // 角色状态修改
-    handleStatusChange(row) {
-      let text = row.status === "0" ? "启用" : "停用";
-      this.$modal.confirm('确认要"' + text + '""' + row.roleName + '"角色吗？').then(function() {
-        return changeRoleStatus(row.roleCode, row.status);
-      }).then(() => {
-        this.$modal.msgSuccess(text + "成功");
-      }).catch(function() {
-        row.status = row.status === "0" ? "1" : "0";
       });
     },
     // 取消按钮
@@ -421,18 +349,16 @@ export default {
       }
       this.menuExpand = false,
       this.menuNodeAll = false,
-      this.deptExpand = true,
-      this.deptNodeAll = false,
+      this.orgExpand = true,
+      this.orgNodeAll = false,
       this.form = {
         roleCode: undefined,
         roleName: undefined,
-        roleKey: undefined,
         roleSort: 0,
-        status: "0",
         functionCodes: [],
-        deptIds: [],
+        orgCodes: [],
         menuCheckStrictly: true,
-        deptCheckStrictly: true,
+        orgCheckStrictly: true,
         remark: undefined
       };
       this.resetForm("form");
@@ -474,10 +400,10 @@ export default {
         for (let i = 0; i < treeList.length; i++) {
           this.$refs.menu.store.nodesMap[treeList[i].id].expanded = value;
         }
-      } else if (type == 'dept') {
-        let treeList = this.deptOptions;
+      } else if (type == 'org') {
+        let treeList = this.orgOptions;
         for (let i = 0; i < treeList.length; i++) {
-          this.$refs.dept.store.nodesMap[treeList[i].id].expanded = value;
+          this.$refs.org.store.nodesMap[treeList[i].id].expanded = value;
         }
       }
     },
@@ -485,16 +411,16 @@ export default {
     handleCheckedTreeNodeAll(value, type) {
       if (type == 'menu') {
         this.$refs.menu.setCheckedNodes(value ? this.menuOptions: []);
-      } else if (type == 'dept') {
-        this.$refs.dept.setCheckedNodes(value ? this.deptOptions: []);
+      } else if (type == 'org') {
+        this.$refs.org.setCheckedNodes(value ? this.orgOptions: []);
       }
     },
     // 树权限（父子联动）
     handleCheckedTreeConnect(value, type) {
       if (type == 'menu') {
         this.form.menuCheckStrictly = value ? true: false;
-      } else if (type == 'dept') {
-        this.form.deptCheckStrictly = value ? true: false;
+      } else if (type == 'org') {
+        this.form.orgCheckStrictly = value ? true: false;
       }
     },
     /** 新增按钮操作 */
@@ -528,7 +454,7 @@ export default {
     /** 选择角色权限范围触发 */
     dataScopeSelectChange(value) {
       if(value !== '2') {
-        this.$refs.dept.setCheckedKeys([]);
+        this.$refs.org.setCheckedKeys([]);
       }
     },
     /** 分配数据权限操作 */
@@ -540,7 +466,7 @@ export default {
         this.openDataScope = true;
         this.$nextTick(() => {
           orgTreeSelect.then(res => {
-            this.$refs.dept.setCheckedKeys(res.checkedKeys);
+            this.$refs.org.setCheckedKeys(res.checkedKeys);
           });
         });
         this.title = "分配数据权限";
@@ -576,7 +502,7 @@ export default {
     /** 提交按钮（数据权限） */
     submitDataScope: function() {
       if (this.form.roleCode != undefined) {
-        this.form.deptIds = this.getDeptAllCheckedKeys();
+        this.form.orgCodes = this.getOrgAllCheckedKeys();
         dataScope(this.form).then(response => {
           this.$modal.msgSuccess("修改成功");
           this.openDataScope = false;

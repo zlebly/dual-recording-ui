@@ -154,13 +154,13 @@ export function mergeRecursive(source, target) {
  * 构造树型结构数据
  * @param {*} data 数据源
  * @param {*} id id字段 默认 'id'
- * @param {*} parentId 父节点字段 默认 'parentId'
+ * @param {*} parentCode 父节点字段 默认 'parentCode'
  * @param {*} children 孩子节点字段 默认 'children'
  */
-export function handleTree(data, id, parentId, children) {
+export function handleTree(data, id, parentCode, children) {
   let config = {
     id: id || 'id',
-    parentId: parentId || 'parentId',
+    parentCode: parentCode || 'parentCode',
     childrenList: children || 'children'
   };
 
@@ -169,17 +169,17 @@ export function handleTree(data, id, parentId, children) {
   var tree = [];
 
   for (let d of data) {
-    let parentId = d[config.parentId];
-    if (childrenListMap[parentId] == null) {
-      childrenListMap[parentId] = [];
+    let parentCode = d[config.parentCode];
+    if (childrenListMap[parentCode] == null) {
+      childrenListMap[parentCode] = [];
     }
     nodeIds[d[config.id]] = d;
-    childrenListMap[parentId].push(d);
+    childrenListMap[parentCode].push(d);
   }
 
   for (let d of data) {
-    let parentId = d[config.parentId];
-    if (nodeIds[parentId] == null) {
+    let parentCode = d[config.parentCode];
+    if (nodeIds[parentCode] == null) {
       tree.push(d);
     }
   }

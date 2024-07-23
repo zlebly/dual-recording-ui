@@ -45,9 +45,9 @@ export function delUser(userId) {
 }
 
 // 用户密码重置
-export function resetUserPwd(userId, password) {
+export function resetUserPwd(id, password) {
   const data = {
-    userId,
+    id,
     password
   }
   return request({
@@ -58,10 +58,10 @@ export function resetUserPwd(userId, password) {
 }
 
 // 用户状态修改
-export function changeUserStatus(userId, status) {
+export function changeUserStatus(id, stopFlag) {
   const data = {
-    userId,
-    status
+    id,
+    stopFlag
   }
   return request({
     url: '/system/user/changeStatus',

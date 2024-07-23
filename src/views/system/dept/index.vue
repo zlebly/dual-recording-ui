@@ -1,16 +1,16 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="部门名称" prop="deptName">
+      <el-form-item label="机构名称" prop="orgName">
         <el-input
-          v-model="queryParams.deptName"
-          placeholder="请输入部门名称"
+          v-model="queryParams.orgName"
+          placeholder="请输入机构名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="部门状态" clearable>
+      <el-form-item label="状态" prop="orgStatus">
+        <el-select v-model="queryParams.orgStatus" placeholder="机构状态" clearable>
           <el-option
             v-for="dict in dict.type.sys_normal_disable"
             :key="dict.value"
@@ -33,7 +33,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:dept:add']"
+          v-hasPermi="['system:org:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -51,16 +51,16 @@
     <el-table
       v-if="refreshTable"
       v-loading="loading"
-      :data="deptList"
-      row-key="deptId"
+      :data="orgList"
+      row-key="orgCode"
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column prop="deptName" label="部门名称" width="260"></el-table-column>
-      <el-table-column prop="orderNum" label="排序" width="200"></el-table-column>
-      <el-table-column prop="status" label="状态" width="100">
+      <el-table-column prop="orgName" label="机构名称" width="260"></el-table-column>
+      <el-table-column prop="viewIndex" label="排序" width="200"></el-table-column>
+      <el-table-column prop="orgStatus" label="状态" width="100">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.orgStatus"/>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="200">
@@ -75,70 +75,65 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:dept:edit']"
+            v-hasPermi="['system:org:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-plus"
             @click="handleAdd(scope.row)"
-            v-hasPermi="['system:dept:add']"
+            v-hasPermi="['system:org:add']"
           >新增</el-button>
           <el-button
-            v-if="scope.row.parentId != 0"
+            v-if="scope.row.parentCode != 0"
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:dept:remove']"
+            v-hasPermi="['system:org:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- 添加或修改部门对话框 -->
+    <!-- 添加或修改机构对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
-          <el-col :span="24" v-if="form.parentId !== 0">
-            <el-form-item label="上级部门" prop="parentId">
-              <treeSelect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择上级部门" />
+          <el-col :span="24" v-if="form.parentCode !== 0">
+            <el-form-item label="上级机构" prop="parentCode">
+              <treeSelect v-model="form.parentCode" :options="orgOptions" :normalizer="normalizer" placeholder="选择上级机构" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="部门名称" prop="deptName">
-              <el-input v-model="form.deptName" placeholder="请输入部门名称" />
+            <el-form-item label="机构名称" prop="orgName">
+              <el-input v-model="form.orgName" placeholder="请输入机构名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="显示排序" prop="orderNum">
-              <el-input-number v-model="form.orderNum" controls-position="right" :min="0" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="负责人" prop="leader">
-              <el-input v-model="form.leader" placeholder="请输入负责人" maxlength="20" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系电话" prop="phone">
-              <el-input v-model="form.phone" placeholder="请输入联系电话" maxlength="11" />
+            <el-form-item label="显示排序" prop="viewIndex">
+              <el-input-number v-model="form.viewIndex" controls-position="right" :min="0" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
+            <el-form-item label="联系电话" prop="orgPhone">
+              <el-input v-model="form.orgPhone" placeholder="请输入联系电话" maxlength="11" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="邮箱" prop="orgAddress">
+              <el-input v-model="form.orgAddress" placeholder="请输入邮箱" maxlength="50" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="部门状态">
-              <el-radio-group v-model="form.status">
+            <el-form-item label="机构状态">
+              <el-radio-group v-model="form.orgStatus">
                 <el-radio
                   v-for="dict in dict.type.sys_normal_disable"
                   :key="dict.value"
@@ -158,12 +153,12 @@
 </template>
 
 <script>
-import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild } from "@/api/system/dept";
-import Treeselect from "@riophae/vue-treeSelect";
-import "@riophae/vue-treeSelect/dist/vue-treeSelect.css";
+import { listOrg, getOrg, delOrg, addOrg, updateOrg, listOrgExcludeChild } from "@/api/system/org";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
-  name: "Dept",
+  name: "Org",
   dicts: ['sys_normal_disable'],
   components: { Treeselect },
   data() {
@@ -173,9 +168,9 @@ export default {
       // 显示搜索条件
       showSearch: true,
       // 表格树数据
-      deptList: [],
-      // 部门树选项
-      deptOptions: [],
+      orgList: [],
+      // 机构树选项
+      orgOptions: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -186,30 +181,30 @@ export default {
       refreshTable: true,
       // 查询参数
       queryParams: {
-        deptName: undefined,
-        status: undefined
+        orgName: undefined,
+        orgStatus: undefined
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        parentId: [
-          { required: true, message: "上级部门不能为空", trigger: "blur" }
+        parentCode: [
+          { required: true, message: "上级机构不能为空", trigger: "blur" }
         ],
-        deptName: [
-          { required: true, message: "部门名称不能为空", trigger: "blur" }
+        orgName: [
+          { required: true, message: "机构名称不能为空", trigger: "blur" }
         ],
-        orderNum: [
+        viewIndex: [
           { required: true, message: "显示排序不能为空", trigger: "blur" }
         ],
-        email: [
+        orgAddress: [
           {
-            type: "email",
+            type: "orgAddress",
             message: "请输入正确的邮箱地址",
             trigger: ["blur", "change"]
           }
         ],
-        phone: [
+        orgPhone: [
           {
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
             message: "请输入正确的手机号码",
@@ -223,22 +218,22 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询部门列表 */
+    /** 查询机构列表 */
     getList() {
       this.loading = true;
-      listDept(this.queryParams).then(response => {
-        this.deptList = this.handleTree(response.data, "deptId");
+      listOrg(this.queryParams).then(response => {
+        this.orgList = this.handleTree(response.data, "orgCode");
         this.loading = false;
       });
     },
-    /** 转换部门数据结构 */
+    /** 转换机构数据结构 */
     normalizer(node) {
       if (node.children && !node.children.length) {
         delete node.children;
       }
       return {
-        id: node.deptId,
-        label: node.deptName,
+        id: node.orgCode,
+        label: node.orgName,
         children: node.children
       };
     },
@@ -250,14 +245,13 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        deptId: undefined,
-        parentId: undefined,
-        deptName: undefined,
-        orderNum: undefined,
-        leader: undefined,
-        phone: undefined,
-        email: undefined,
-        status: "0"
+        orgCode: undefined,
+        parentCode: undefined,
+        orgName: undefined,
+        viewIndex: undefined,
+        orgPhone: undefined,
+        orgAddress: undefined,
+        orgStatus: "0"
       };
       this.resetForm("form");
     },
@@ -274,12 +268,12 @@ export default {
     handleAdd(row) {
       this.reset();
       if (row != undefined) {
-        this.form.parentId = row.deptId;
+        this.form.parentCode = row.orgCode;
       }
       this.open = true;
-      this.title = "添加部门";
-      listDept().then(response => {
-        this.deptOptions = this.handleTree(response.data, "deptId");
+      this.title = "添加机构";
+      listOrg().then(response => {
+        this.orgOptions = this.handleTree(response.data, "orgCode");
       });
     },
     /** 展开/折叠操作 */
@@ -293,15 +287,15 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      getDept(row.deptId).then(response => {
+      getOrg(row.orgCode).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改部门";
-        listDeptExcludeChild(row.deptId).then(response => {
-          this.deptOptions = this.handleTree(response.data, "deptId");
-          if (this.deptOptions.length == 0) {
-            const noResultsOptions = { deptId: this.form.parentId, deptName: this.form.parentName, children: [] };
-            this.deptOptions.push(noResultsOptions);
+        this.title = "修改机构";
+        listOrgExcludeChild(row.orgCode).then(response => {
+          this.orgOptions = this.handleTree(response.data, "orgCode");
+          if (this.orgOptions.length == 0) {
+            const noResultsOptions = { orgCode: this.form.parentCode, orgName: this.form.parentName, children: [] };
+            this.orgOptions.push(noResultsOptions);
           }
         });
       });
@@ -310,14 +304,14 @@ export default {
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.deptId != undefined) {
-            updateDept(this.form).then(response => {
+          if (this.form.orgCode != undefined) {
+            updateOrg(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addDept(this.form).then(response => {
+            addOrg(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -328,8 +322,8 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$modal.confirm('是否确认删除名称为"' + row.deptName + '"的数据项？').then(function() {
-        return delDept(row.deptId);
+      this.$modal.confirm('是否确认删除名称为"' + row.orgName + '"的数据项？').then(function() {
+        return delOrg(row.orgCode);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

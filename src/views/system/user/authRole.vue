@@ -4,8 +4,8 @@
     <el-form ref="form" :model="form" label-width="80px">
       <el-row>
         <el-col :span="8" :offset="2">
-          <el-form-item label="用户昵称" prop="nickName">
-            <el-input v-model="form.nickName" disabled />
+          <el-form-item label="用户昵称" prop="loginName">
+            <el-input v-model="form.loginName" disabled />
           </el-form-item>
         </el-col>
         <el-col :span="8" :offset="2">

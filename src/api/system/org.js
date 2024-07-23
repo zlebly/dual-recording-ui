@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 // 查询机构列表
-export function listDept(query) {
+export function listOrg(query) {
   return request({
     url: '/system/org/list',
     method: 'get',
@@ -10,7 +10,7 @@ export function listDept(query) {
 }
 
 // 查询机构列表（排除节点）
-export function listDeptExcludeChild(orgCode) {
+export function listOrgExcludeChild(orgCode) {
   return request({
     url: '/system/org/list/exclude/' + orgCode,
     method: 'get'
@@ -18,7 +18,7 @@ export function listDeptExcludeChild(orgCode) {
 }
 
 // 查询机构详细
-export function getDept(orgCode) {
+export function getOrg(orgCode) {
   return request({
     url: '/system/org/' + orgCode,
     method: 'get'
@@ -26,7 +26,7 @@ export function getDept(orgCode) {
 }
 
 // 新增机构
-export function addDept(data) {
+export function addOrg(data) {
   return request({
     url: '/system/org',
     method: 'post',
@@ -35,7 +35,7 @@ export function addDept(data) {
 }
 
 // 修改机构
-export function updateDept(data) {
+export function updateOrg(data) {
   return request({
     url: '/system/org',
     method: 'put',
@@ -44,7 +44,7 @@ export function updateDept(data) {
 }
 
 // 删除机构
-export function delDept(orgCode) {
+export function delOrg(orgCode) {
   return request({
     url: '/system/org/' + orgCode,
     method: 'delete'

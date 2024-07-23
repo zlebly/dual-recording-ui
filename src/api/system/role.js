@@ -44,18 +44,6 @@ export function dataScope(data) {
   })
 }
 
-// 角色状态修改
-export function changeRoleStatus(roleCode, status) {
-  const data = {
-    roleCode,
-    status
-  }
-  return request({
-    url: '/system/role/changeStatus',
-    method: 'put',
-    data: data
-  })
-}
 
 // 删除角色
 export function delRole(roleCode) {

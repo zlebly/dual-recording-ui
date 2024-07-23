@@ -19,8 +19,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="数据状态" clearable>
+      <el-form-item label="状态" prop="stopFlag">
+        <el-select v-model="queryParams.stopFlag" placeholder="数据状态" clearable>
           <el-option
             v-for="dict in dict.type.sys_normal_disable"
             :key="dict.value"
@@ -101,9 +101,9 @@
       </el-table-column>
       <el-table-column label="字典键值" align="center" prop="dictValue" />
       <el-table-column label="字典排序" align="center" prop="dictSort" />
-      <el-table-column label="状态" align="center" prop="status">
+      <el-table-column label="状态" align="center" prop="stopFlag">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.stopFlag"/>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
@@ -168,8 +168,8 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="form.status">
+        <el-form-item label="状态" prop="stopFlag">
+          <el-radio-group v-model="form.stopFlag">
             <el-radio
               v-for="dict in dict.type.sys_normal_disable"
               :key="dict.value"
@@ -253,7 +253,7 @@ export default {
         pageSize: 10,
         dictType: undefined,
         dictLabel: undefined,
-        status: undefined
+        stopFlag: undefined
       },
       // 表单参数
       form: {},
@@ -314,7 +314,7 @@ export default {
         cssClass: undefined,
         listClass: 'default',
         dictSort: 0,
-        status: "0",
+        stopFlag: "0",
         remark: undefined
       };
       this.resetForm("form");

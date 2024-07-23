@@ -19,15 +19,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item label="状态" prop="loginFlags">
         <el-select
-          v-model="queryParams.status"
+          v-model="queryParams.loginFlags"
           placeholder="登录状态"
           clearable
           style="width: 240px"
         >
           <el-option
-            v-for="dict in dict.type.sys_common_status"
+            v-for="dict in dict.type.sys_common_loginFlags"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -106,9 +106,9 @@
       <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
       <el-table-column label="浏览器" align="center" prop="browser" :show-overflow-tooltip="true" />
       <el-table-column label="操作系统" align="center" prop="os" />
-      <el-table-column label="登录状态" align="center" prop="status">
+      <el-table-column label="登录状态" align="center" prop="loginFlags">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_common_status" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.sys_common_loginFlags" :value="scope.row.loginFlags"/>
         </template>
       </el-table-column>
       <el-table-column label="操作信息" align="center" prop="msg" :show-overflow-tooltip="true" />
@@ -134,7 +134,7 @@ import { list, delLogininfor, cleanLogininfor, unlockLogininfor } from "@/api/mo
 
 export default {
   name: "Logininfor",
-  dicts: ['sys_common_status'],
+  dicts: ['sys_common_loginFlags'],
   data() {
     return {
       // 遮罩层
@@ -163,7 +163,7 @@ export default {
         pageSize: 10,
         ipaddr: undefined,
         userName: undefined,
-        status: undefined
+        loginFlags: undefined
       }
     };
   },

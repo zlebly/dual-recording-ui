@@ -5,7 +5,7 @@
       <el-col :span="4" :xs="24">
         <div class="head-container">
           <el-input
-            v-model="deptName"
+            v-model="orgName"
             placeholder="请输入部门名称"
             clearable
             size="small"
@@ -15,7 +15,7 @@
         </div>
         <div class="head-container">
           <el-tree
-            :data="deptOptions"
+            :data="orgOptions"
             :props="defaultProps"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
@@ -39,18 +39,18 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
+          <el-form-item label="手机号码" prop="mobileNo">
             <el-input
-              v-model="queryParams.phonenumber"
+              v-model="queryParams.mobileNo"
               placeholder="请输入手机号码"
               clearable
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="状态" prop="status">
+          <el-form-item label="状态" prop="stopFlag">
             <el-select
-              v-model="queryParams.status"
+              v-model="queryParams.stopFlag"
               placeholder="用户状态"
               clearable
               style="width: 240px"
@@ -140,13 +140,13 @@
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
           <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
-          <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
+          <el-table-column label="用户昵称" align="center" key="loginName" prop="loginName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="部门" align="center" key="orgName" prop="org.orgName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="手机号码" align="center" key="mobileNo" prop="mobileNo" v-if="columns[4].visible" width="120" />
+          <el-table-column label="状态" align="center" key="stopFlag" v-if="columns[5].visible">
             <template slot-scope="scope">
               <el-switch
-                v-model="scope.row.status"
+                v-model="scope.row.stopFlag"
                 active-value="0"
                 inactive-value="1"
                 @change="handleStatusChange(scope.row)"
@@ -207,20 +207,20 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
+            <el-form-item label="用户昵称" prop="loginName">
+              <el-input v-model="form.loginName" placeholder="请输入用户昵称" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="归属部门" prop="deptId">
-              <treeSelect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
+            <el-form-item label="归属部门" prop="orgCode">
+              <treeSelect v-model="form.orgCode" :options="orgOptions" :show-count="true" placeholder="请选择归属部门" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="手机号码" prop="phonenumber">
-              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
+            <el-form-item label="手机号码" prop="mobileNo">
+              <el-input v-model="form.mobileNo" placeholder="请输入手机号码" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -256,7 +256,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
+              <el-radio-group v-model="form.stopFlag">
                 <el-radio
                   v-for="dict in dict.type.sys_normal_disable"
                   :key="dict.value"
@@ -288,7 +288,6 @@
                   :key="item.roleCode"
                   :label="item.roleName"
                   :value="item.roleCode"
-                  :disabled="item.status == 1"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -343,8 +342,8 @@
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, orgTreeSelect } from "@/api/system/user";
 import { getToken } from "@/utils/auth";
-import Treeselect from "@riophae/vue-treeSelect";
-import "@riophae/vue-treeSelect/dist/vue-treeSelect.css";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "User",
@@ -369,11 +368,11 @@ export default {
       // 弹出层标题
       title: "",
       // 部门树选项
-      deptOptions: undefined,
+      orgOptions: undefined,
       // 是否显示弹出层
       open: false,
       // 部门名称
-      deptName: undefined,
+      orgName: undefined,
       // 默认密码
       initPassword: undefined,
       // 日期范围
@@ -408,9 +407,9 @@ export default {
         pageNum: 1,
         pageSize: 10,
         userName: undefined,
-        phonenumber: undefined,
-        status: undefined,
-        deptId: undefined
+        mobileNo: undefined,
+        stopFlag: undefined,
+        orgCode: undefined
       },
       // 列信息
       columns: [
@@ -428,7 +427,7 @@ export default {
           { required: true, message: "用户名称不能为空", trigger: "blur" },
           { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
         ],
-        nickName: [
+        loginName: [
           { required: true, message: "用户昵称不能为空", trigger: "blur" }
         ],
         password: [
@@ -443,7 +442,7 @@ export default {
             trigger: ["blur", "change"]
           }
         ],
-        phonenumber: [
+        mobileNo: [
           {
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
             message: "请输入正确的手机号码",
@@ -455,7 +454,7 @@ export default {
   },
   watch: {
     // 根据名称筛选部门树
-    deptName(val) {
+    orgName(val) {
       this.$refs.tree.filter(val);
     }
   },
@@ -480,7 +479,7 @@ export default {
     /** 查询部门下拉树结构 */
     getorgTree() {
       orgTreeSelect().then(response => {
-        this.deptOptions = response.data;
+        this.orgOptions = response.data;
       });
     },
     // 筛选节点
@@ -490,18 +489,18 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.queryParams.deptId = data.id;
+      this.queryParams.orgCode = data.id;
       this.handleQuery();
     },
     // 用户状态修改
     handleStatusChange(row) {
-      let text = row.status === "0" ? "启用" : "停用";
+      let text = row.stopFlag === "0" ? "启用" : "停用";
       this.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗？').then(function() {
-        return changeUserStatus(row.userId, row.status);
+        return changeUserStatus(row.userId, row.stopFlag);
       }).then(() => {
         this.$modal.msgSuccess(text + "成功");
       }).catch(function() {
-        row.status = row.status === "0" ? "1" : "0";
+        row.stopFlag = row.stopFlag === "0" ? "1" : "0";
       });
     },
     // 取消按钮
@@ -513,14 +512,14 @@ export default {
     reset() {
       this.form = {
         userId: undefined,
-        deptId: undefined,
+        orgCode: undefined,
         userName: undefined,
-        nickName: undefined,
+        loginName: undefined,
         password: undefined,
-        phonenumber: undefined,
+        mobileNo: undefined,
         email: undefined,
         sex: undefined,
-        status: "0",
+        stopFlag: "0",
         remark: undefined,
         postIds: [],
         roleCodes: []
@@ -536,7 +535,7 @@ export default {
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForm");
-      this.queryParams.deptId = undefined;
+      this.queryParams.orgCode = undefined;
       this.$refs.tree.setCurrentKey(null);
       this.handleQuery();
     },

@@ -50,14 +50,14 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <!-- TODO 此处机构号先使用deptId -->
+
       <el-form-item label="机构号" prop="orgCode">
         <el-select v-model="queryParams.orgCode" placeholder="请选择机构号">
           <el-option
             v-for="item in orgCodeOptions"
-            :key="item.deptId"
-            :label="item.deptName"
-            :value="item.deptId">
+            :key="item.orgCode"
+            :label="item.orgName"
+            :value="item.orgCode">
           </el-option>
         </el-select>
       </el-form-item>
