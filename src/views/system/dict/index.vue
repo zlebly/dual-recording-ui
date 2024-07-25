@@ -10,9 +10,9 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="字典类型" prop="dictType">
+      <el-form-item label="字典类型" prop="dictCode">
         <el-input
-          v-model="queryParams.dictType"
+          v-model="queryParams.dictCode"
           placeholder="请输入字典类型"
           clearable
           style="width: 240px"
@@ -26,12 +26,12 @@
           clearable
           style="width: 240px"
         >
-          <el-option
-            v-for="dict in dict.type.sys_normal_disable"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
+        <el-option
+          v-for="dict in dict.type.sys_normal_disable"
+          :key="dict.raw.dictCode"
+          :label="dict.raw.dictName"
+          :value="dict.raw.dictCode"
+        />
         </el-select>
       </el-form-item>
       <el-form-item label="创建时间">
@@ -109,12 +109,12 @@
 
     <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="字典编号" align="center" prop="dictId" />
+      <el-table-column label="字典编号" align="center" prop="id" />
       <el-table-column label="字典名称" align="center" prop="dictName" :show-overflow-tooltip="true" />
       <el-table-column label="字典类型" align="center" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <router-link :to="'/system/dict-data/index/' + scope.row.dictId" class="link-type">
-            <span>{{ scope.row.dictType }}</span>
+          <router-link :to="'/system/dict-data/index/' + scope.row.id" class="link-type">
+            <span>{{ scope.row.dictCode }}</span>
           </router-link>
         </template>
       </el-table-column>
@@ -163,16 +163,16 @@
         <el-form-item label="字典名称" prop="dictName">
           <el-input v-model="form.dictName" placeholder="请输入字典名称" />
         </el-form-item>
-        <el-form-item label="字典类型" prop="dictType">
-          <el-input v-model="form.dictType" placeholder="请输入字典类型" />
+        <el-form-item label="字典类型" prop="dictCode">
+          <el-input v-model="form.dictCode" placeholder="请输入字典类型" />
         </el-form-item>
         <el-form-item label="状态" prop="stopFlag">
           <el-radio-group v-model="form.stopFlag">
             <el-radio
               v-for="dict in dict.type.sys_normal_disable"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
+              :key="dict.raw.code"
+              :label="dict.raw.dictName"
+            >{{dict.raw.dictName}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -220,7 +220,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         dictName: undefined,
-        dictType: undefined,
+        dictCode: undefined,
         stopFlag: undefined
       },
       // 表单参数
@@ -230,7 +230,7 @@ export default {
         dictName: [
           { required: true, message: "字典名称不能为空", trigger: "blur" }
         ],
-        dictType: [
+        dictCode: [
           { required: true, message: "字典类型不能为空", trigger: "blur" }
         ]
       }
@@ -238,6 +238,7 @@ export default {
   },
   created() {
     this.getList();
+    console.log(this.dict.type.sys_normal_disable);
   },
   methods: {
     /** 查询字典类型列表 */
@@ -260,7 +261,7 @@ export default {
       this.form = {
         dictId: undefined,
         dictName: undefined,
-        dictType: undefined,
+        dictCode: undefined,
         stopFlag: "0",
         remark: undefined
       };
@@ -285,14 +286,14 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.dictId)
+      this.ids = selection.map(item => item.id)
       this.single = selection.length!=1
       this.multiple = !selection.length
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const dictId = row.dictId || this.ids
+      const dictId = row.id || this.ids
       getType(dictId).then(response => {
         this.form = response.data;
         this.open = true;

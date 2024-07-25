@@ -77,6 +77,13 @@ function loadDict(dict, dictMeta) {
       dicts.forEach(d => {
         Vue.set(dict.label[type], d.value, d.label)
       })
+      // for (let item of dicts) {
+      //   console.log('Item:', item);
+      // }
+      // for (let i = 0; i < dicts.length; i++) {
+      //   console.log(`Item at index ${i}:`, dicts[i]);
+      // }
+      // confirm("打印dicts:" + dicts[0].value)
       return dicts
     })
 }

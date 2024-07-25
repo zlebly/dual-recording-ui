@@ -8,7 +8,7 @@
             v-for="item in userIdOptions"
             :key="item.userId"
             :label="item.userName"
-            :value="item.userId">
+            :value="item.loginName">
           </el-option>
         </el-select>
       </el-form-item>
@@ -85,10 +85,14 @@ export default {
       // 请求获取录入人
       getUserIdOptions().then(response => {
         this.userIdOptions = response.data;
+        console.log("开始打印")
+        this.userIdOptions.forEach((option, index) => {
+        console.log(`Option ${index + 1}:`, option);
+      });
       });
       // 请求获取机构号
       getOrgCodeOptions().then(response => {
-        console.log(response.data);
+        // console.log(response.data);
         this.orgCodeOptions = response.data;
       });
     },
